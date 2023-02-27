@@ -22,8 +22,6 @@ public class Robot extends TimedRobot {
   private XboxController m_stick;
 
   private double m_previousX = 0;
-  private double m_previousY = 0;
-  private double m_previousZ = 0;
   private double m_speed = 0;
 
   @Override
@@ -33,14 +31,11 @@ public class Robot extends TimedRobot {
     WPI_TalonFX frontRight = new WPI_TalonFX(kFrontRightChannel, "rio");
     WPI_TalonFX rearRight = new WPI_TalonFX(kRearRightChannel, "rio");
 
-    // TODO: Change according to the robot
+    // Invert the right side motors
     frontRight.setInverted(true);
     rearRight.setInverted(true);
-    // frontLeft.setInverted(true);
-    // rearLeft.setInverted(true);
 
     m_robotDrive = new MecanumDrive(frontLeft, rearLeft, frontRight, rearRight);
-
     m_stick = new XboxController(kJoystickChannel);
   }
 
@@ -85,8 +80,6 @@ public class Robot extends TimedRobot {
     }
 
     m_previousX = x;
-    m_previousY = y;
-    m_previousZ = z;
     m_speed = speed;
 
     // Scale the inputs
