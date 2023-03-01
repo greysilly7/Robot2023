@@ -105,5 +105,6 @@ public class Robot extends TimedRobot {
 
     // Drive the robot
     m_robotDrive.driveCartesian(x, y, z);
+    m_robotDrive.feed();
   }
 }
