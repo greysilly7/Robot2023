@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.autonomous.autonomous;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
@@ -24,6 +26,8 @@ public class Robot extends TimedRobot {
   private double m_previousX = 0;
   private double m_speed = 0;
 
+  private autonomous autonomous;
+
   @Override
   public void robotInit() {
     WPI_TalonFX frontLeft = new WPI_TalonFX(kFrontLeftChannel, "rio");
@@ -37,6 +41,18 @@ public class Robot extends TimedRobot {
 
     m_robotDrive = new MecanumDrive(frontLeft, rearLeft, frontRight, rearRight);
     m_stick = new XboxController(kJoystickChannel);
+
+    autonomous = new autonomous();
+  }
+
+  @Override
+  public void autonomousInit() {
+    // TODO Auto-generated method stub
+    Command m_autonomousCommand = autonomous.getSelectedCommand();
+
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
+    }
   }
 
   @Override
