@@ -5,106 +5,98 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.autonomous.autonomous;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-
+/**
+ * The VM is configured to automatically run this class, and to call the functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the name of this class or
+ * the package after creating this project, you must also update the build.gradle file in the
+ * project.
+ */
 public class Robot extends TimedRobot {
-  private static final int kFrontLeftChannel = 2;
-  private static final int kRearLeftChannel = 3;
-  private static final int kFrontRightChannel = 1;
-  private static final int kRearRightChannel = 4;
+  private Command m_autonomousCommand;
 
-  private static final int kJoystickChannel = 0;
+  private RobotContainer m_robotContainer;
 
-  private MecanumDrive m_robotDrive;
-  private XboxController m_stick;
-
-  private double m_previousX = 0;
-  private double m_speed = 0;
-
-  private autonomous autonomous;
-
+  /**
+   * This function is run when the robot is first started up and should be used for any
+   * initialization code.
+   */
   @Override
   public void robotInit() {
-    WPI_TalonFX frontLeft = new WPI_TalonFX(kFrontLeftChannel, "rio");
-    WPI_TalonFX rearLeft = new WPI_TalonFX(kRearLeftChannel, "rio");
-    WPI_TalonFX frontRight = new WPI_TalonFX(kFrontRightChannel, "rio");
-    WPI_TalonFX rearRight = new WPI_TalonFX(kRearRightChannel, "rio");
-
-    // Invert the right side motors
-    frontRight.setInverted(true);
-    rearRight.setInverted(true);
-
-    m_robotDrive = new MecanumDrive(frontLeft, rearLeft, frontRight, rearRight);
-    m_stick = new XboxController(kJoystickChannel);
-
-    autonomous = new autonomous();
+    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    // autonomous chooser on the dashboard.
+    m_robotContainer = new RobotContainer();
   }
 
+  /**
+   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+   * that you want ran during disabled, autonomous, teleoperated and test.
+   *
+   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+   * SmartDashboard integrated updating.
+   */
+  @Override
+  public void robotPeriodic() {
+    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+    // commands, running already-scheduled commands, removing finished or interrupted commands,
+    // and running subsystem periodic() methods.  This must be called from the robot's periodic
+    // block in order for anything in the Command-based framework to work.
+    CommandScheduler.getInstance().run();
+  }
+
+  /** This function is called once each time the robot enters Disabled mode. */
+  @Override
+  public void disabledInit() {}
+
+  @Override
+  public void disabledPeriodic() {}
+
+  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    // TODO Auto-generated method stub
-    Command m_autonomousCommand = autonomous.getSelectedCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
+    /*
+     * String autoSelected = SmartDashboard.getString("Auto Selector",
+     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
+     * = new MyAutoCommand(); break; case "Default Auto": default:
+     * autonomousCommand = new ExampleCommand(); break; }
+     */
+
+    // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
   }
 
+  /** This function is called periodically during autonomous. */
   @Override
-  public void teleopPeriodic() {
-    drive();
+  public void autonomousPeriodic() {}
+
+  @Override
+  public void teleopInit() {
+    // This makes sure that the autonomous stops running when
+    // teleop starts running. If you want the autonomous to
+    // continue until interrupted by another command, remove
+    // this line or comment it out.
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+    }
   }
 
-  public void drive() {
-    // Get the Joystick Inputs for the X, Y, and Z axis
-    double x = m_stick.getLeftY() * -1;
-    double y = m_stick.getRightX();
-    double z = m_stick.getLeftX();
+  /** This function is called periodically during operator control. */
+  @Override
+  public void teleopPeriodic() {}
 
-    // Add deadzones to the inputs
-    final double kDeadzone = 0.15;
-    final double kZDeadzone = 0.20;
-    if (Math.abs(x) < kDeadzone) {
-      x = 0.0;
-    }
-    if (Math.abs(y) < kDeadzone) {
-      y = 0.0;
-    }
-    if (Math.abs(z) < kZDeadzone) {
-      z = 0.0;
-    }
-
-    // Scale the inputs with trapezoidal motion
-    final double kMaxSpeed = 0.50;
-    final double kAcceleration = 0.015;
-    final double kDeceleration = 0.015;
-
-    double speed = kMaxSpeed;
-
-    // Accelerate the robot if the input is increasing
-    if (x > m_previousX) {
-      speed = Math.min(speed, m_speed + kAcceleration);
-    }
-    // Decelerate the robot if the input is decreasing
-    if (x < m_previousX) {
-      speed = Math.max(speed, m_speed - kDeceleration);
-    }
-
-    m_previousX = x;
-    m_speed = speed;
-
-    // Scale the inputs
-    x *= speed;
-    y *= speed;
-    z *= speed;
-
-    // Drive the robot
-    m_robotDrive.driveCartesian(x, y, z);
-    m_robotDrive.feed();
+  @Override
+  public void testInit() {
+    // Cancels all running commands at the start of test mode.
+    CommandScheduler.getInstance().cancelAll();
   }
+
+  /** This function is called periodically during test mode. */
+  @Override
+  public void testPeriodic() {}
 }
