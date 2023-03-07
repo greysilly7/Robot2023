@@ -61,12 +61,12 @@ public class Autonomous {
   public Command goFoward() {
     return builder.fullAuto(
         PathPlanner.loadPath("Go Foward", AutoConstants.kMaxSpeedMetersPerSecond,
-            AutoConstants.kMaxAccelerationMetersPerSecondSquared));
+            AutoConstants.kMaxAccelerationMetersPerSecond));
   }
 
   public Command goLeft() {
     return builder.fullAuto(
         PathPlanner.loadPath("Go Left", AutoConstants.kMaxSpeedMetersPerSecond,
-            AutoConstants.kMaxAccelerationMetersPerSecondSquared));
+            AutoConstants.kMaxAccelerationMetersPerSecond));
   }
 }
