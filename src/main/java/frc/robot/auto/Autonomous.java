@@ -23,7 +23,6 @@ public class Autonomous {
 
   public Autonomous(DriveSubsystem driveSubsystem) {
     this.driveSubsystem = driveSubsystem;
-    // TODO: Figure out why this is not working correctly
     builder = new MecanumAutoBuilder(
         driveSubsystem::getPose,
         driveSubsystem::resetOdometry,
@@ -41,7 +40,7 @@ public class Autonomous {
           double xSpeed = (frontLeftSpeed + rearLeftSpeed + frontRightSpeed + rearRightSpeed) / 4.0;
           double ySpeed = ((frontLeftSpeed + rearRightSpeed) + ((frontRightSpeed + rearLeftSpeed) * -1)) / 4.0;
           double rotSpeed = ((frontLeftSpeed + rearLeftSpeed) - (frontRightSpeed + rearRightSpeed))
-              / (4.0 * Constants.DriveConstants.kTrackWidth);
+              / (4.0 * DriveConstants.kTrackWidth);
 
           driveSubsystem.drive(xSpeed * -1, ySpeed, rotSpeed, false);
         },

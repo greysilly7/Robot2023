@@ -197,7 +197,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public double getAngularVelocity() {
-    var wheelSpeeds = getCurrentWheelSpeeds();
+    MecanumDriveWheelSpeeds wheelSpeeds = getCurrentWheelSpeeds();
     double frontLeftSpeed = wheelSpeeds.frontLeftMetersPerSecond;
     double frontRightSpeed = wheelSpeeds.frontRightMetersPerSecond;
     double rearLeftSpeed = wheelSpeeds.rearLeftMetersPerSecond;

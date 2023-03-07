@@ -42,7 +42,7 @@ public final class Constants {
     public static final int kEncoderCPR = 2048;
     public static final double kWheelDiameterMeters = 0.1524;
     public static final double kEncoderMetersPerRotation = (kWheelDiameterMeters * Math.PI) / kEncoderCPR;
-    public static final int kEncoderTimeoutMS = 0; // (1 / max_velocity_meters_per_second) * kEncoderCPR * 10;
+    public static final int kEncoderTimeoutMS = 0;
 
     // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
     // These characterization values MUST be determined either experimentally or
