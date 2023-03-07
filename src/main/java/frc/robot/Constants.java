@@ -32,23 +32,16 @@ public final class Constants {
     // Distance between centers of right and left wheels on robot
     public static final double kWheelBase = 0.51435;
     // Distance between centers of front and back wheels on robot
-
+    public static final double kGearRatio = 10.25;
     public static final MecanumDriveKinematics kDriveKinematics = new MecanumDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
         new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
-    public static final int kEncoderCPR = 1024;
+    public static final int kEncoderCPR = 2048;
     public static final double kWheelDiameterMeters = 0.1524;
-    public static final double kEncoderDistancePerPulse =
-        // Assumes the encoders are directly mounted on the wheel shafts
-        (kWheelDiameterMeters * Math.PI) / (double) kEncoderCPR;
-    // public static final double maxVelocityEncoderUnitsPer100ms =
-    // (DriveConstants.kMaxSpeedMetersPerSecond
-    // kWheelDiameterMeters)*kEncoderCPR/10.0;
-    // TODO: Acutally put an acurate thing here following this formula
-    // timeout_ms = (1 / max_velocity_units_per_100ms) * pulses_per_revolution * 10
+    public static final double kEncoderMetersPerRotation = (kWheelDiameterMeters * Math.PI) / kEncoderCPR;
     public static final int kEncoderTimeoutMS = 0; // (1 / max_velocity_meters_per_second) * kEncoderCPR * 10;
 
     // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
@@ -68,7 +61,7 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
-    public static final double kDeadzone = 0.15;
+    public static final double kDeadzone = 0.20;
   }
 
   public static final class AutoConstants {

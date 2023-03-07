@@ -3,6 +3,32 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Autonomous Chooser": "String Chooser"
+    },
+    "windows": {
+      "/SmartDashboard/Autonomous Chooser": {
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables": {
+    "Persistent Values": {
+      "open": false
+    },
+    "transitory": {
+      "LiveWindow": {
+        "open": true
+      },
+      "Shuffleboard": {
+        "open": true
+      },
+      "SmartDashboard": {
+        "Autonomous Chooser": {
+          "open": true
+        },
+        "open": true
+      }
     }
   }
 }

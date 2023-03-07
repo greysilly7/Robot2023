@@ -7,11 +7,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.OIConstants;
-import frc.robot.auto.auto;
+import frc.robot.auto.Autonomous;
+import frc.robot.commands.TeleopCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /*
@@ -23,9 +23,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
     // The robot's subsystems
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-    private final auto m_auto = new auto(m_robotDrive);
+    // Autonomous
+    private final Autonomous m_auto = new Autonomous(m_robotDrive);
     // The driver's controller
-    XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+    private final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+    // Teleop Command
+    private final TeleopCommand m_teleopCommand = new TeleopCommand(m_robotDrive, m_driverController);
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -36,32 +39,7 @@ public class RobotContainer {
 
         // Configure default commands
         // Set the default drive command to split-stick arcade drive
-        m_robotDrive.setDefaultCommand(
-                // A split-stick arcade command, with forward/backward controlled by the left
-                // hand, and turning controlled by the right.
-                new RunCommand(
-                        () -> {
-                            double x = m_driverController.getLeftY();
-                            double y = m_driverController.getLeftX();
-                            double z = m_driverController.getRightX();
-
-                            if (Math.abs(x) < OIConstants.kDeadzone) {
-                                x = 0.0;
-                            }
-                            if (Math.abs(y) < OIConstants.kDeadzone) {
-                                y = 0.0;
-                            }
-                            if (Math.abs(z) < OIConstants.kDeadzone) {
-                                z = 0.0;
-                            }
-
-                            m_robotDrive.drive(
-                                    x * -1,
-                                    y,
-                                    z,
-                                    false);
-                        },
-                        m_robotDrive));
+        m_robotDrive.setDefaultCommand(m_teleopCommand);
     }
 
     /**
@@ -81,7 +59,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return null;// m_auto.getSelected();
+        return m_auto.getSelected();
 
         /**
          * Use this to pass the autonomous command to the main {@link Robot} class.

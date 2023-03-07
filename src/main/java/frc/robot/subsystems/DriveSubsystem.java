@@ -39,29 +39,29 @@ public class DriveSubsystem extends SubsystemBase {
     // Fancy Dancy Encoder Stuff
     m_frontLeft.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
         DriveConstants.kEncoderTimeoutMS);
-    m_frontLeft.setSensorPhase(false);
+    m_frontLeft.setSensorPhase(true);
     m_frontLeft.setSelectedSensorPosition(0, 0, 10); // We need to invert one side of the drivetrain so that positive
 
     m_rearLeft.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
         DriveConstants.kEncoderTimeoutMS);
-    m_rearLeft.setSensorPhase(false);
+    m_rearLeft.setSensorPhase(true);
     m_rearLeft.setSelectedSensorPosition(0, 0, 10); // We need to invert one side of the drivetrain so that positive
 
     m_frontRight.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
         DriveConstants.kEncoderTimeoutMS);
-    m_frontRight.setSensorPhase(true);
+    m_frontRight.setSensorPhase(false);
     m_frontRight.setSelectedSensorPosition(0, 0, DriveConstants.kEncoderTimeoutMS);
 
     m_rearRight.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
         DriveConstants.kEncoderTimeoutMS);
-    m_rearRight.setSensorPhase(true);
+    m_rearRight.setSensorPhase(false);
     m_rearRight.setSelectedSensorPosition(0, 0, DriveConstants.kEncoderTimeoutMS);
 
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
-    m_frontRight.setInverted(true);
-    m_rearRight.setInverted(true);
+    m_frontLeft.setInverted(true);
+    m_rearLeft.setInverted(true);
   }
 
   @Override
@@ -130,11 +130,15 @@ public class DriveSubsystem extends SubsystemBase {
    * @return the current wheel speeds in a MecanumDriveWheelSpeeds object.
    */
   public MecanumDriveWheelSpeeds getCurrentWheelSpeeds() {
-    return new MecanumDriveWheelSpeeds(
-        m_frontLeft.getSelectedSensorVelocity(),
-        m_frontRight.getSelectedSensorVelocity(),
-        m_rearLeft.getSelectedSensorVelocity(),
-        m_rearRight.getSelectedSensorVelocity());
+    double frontLeftSpeed = m_frontLeft.getSelectedSensorVelocity() * DriveConstants.kEncoderMetersPerRotation
+        / DriveConstants.kGearRatio;
+    double frontRightSpeed = m_frontRight.getSelectedSensorVelocity()
+        * DriveConstants.kEncoderMetersPerRotation / DriveConstants.kGearRatio;
+    double rearLeftSpeed = m_rearLeft.getSelectedSensorVelocity() * DriveConstants.kEncoderMetersPerRotation
+        / DriveConstants.kGearRatio;
+    double rearRightSpeed = m_rearRight.getSelectedSensorVelocity() * DriveConstants.kEncoderMetersPerRotation
+        / DriveConstants.kGearRatio;
+    return new MecanumDriveWheelSpeeds(frontLeftSpeed, frontRightSpeed, rearLeftSpeed, rearRightSpeed);
   }
 
   /**
@@ -144,11 +148,19 @@ public class DriveSubsystem extends SubsystemBase {
    *         MecanumDriveWheelPositions object.
    */
   public MecanumDriveWheelPositions getCurrentWheelDistances() {
+    double frontLeftPosition = m_frontLeft.getSelectedSensorPosition()
+        * (DriveConstants.kWheelDiameterMeters / DriveConstants.kGearRatio);
+    double frontRightPosition = m_frontRight.getSelectedSensorPosition()
+        * (DriveConstants.kWheelDiameterMeters / DriveConstants.kGearRatio);
+    double rearLeftPosition = m_rearLeft.getSelectedSensorPosition()
+        * (DriveConstants.kWheelDiameterMeters / DriveConstants.kGearRatio);
+    double rearRightPosition = m_rearRight.getSelectedSensorPosition()
+        * (DriveConstants.kWheelDiameterMeters / DriveConstants.kGearRatio);
     return new MecanumDriveWheelPositions(
-        m_frontLeft.getSelectedSensorPosition(),
-        m_frontRight.getSelectedSensorPosition(),
-        m_rearLeft.getSelectedSensorPosition(),
-        m_rearRight.getSelectedSensorPosition());
+        frontLeftPosition,
+        frontRightPosition,
+        rearLeftPosition,
+        rearRightPosition);
   }
 
   /**
@@ -183,4 +195,13 @@ public class DriveSubsystem extends SubsystemBase {
   public double getTurnRate() {
     return -m_gyro.getRate();
   }
+
+  public double getAngularVelocity() {
+    double leftVel = m_frontLeft.getSelectedSensorVelocity();
+    double rightVel = m_frontRight.getSelectedSensorVelocity();
+    double angularVel = (rightVel - leftVel) / (2 * DriveConstants.kTrackWidth);
+
+    return angularVel;
+  }
+
 }

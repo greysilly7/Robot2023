@@ -10,17 +10,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class auto {
+public class Autonomous {
   private final SendableChooser<Command> autonomousChooser;
   private final MecanumAutoBuilder builder;
   private final HashMap<String, Command> eventMap = new HashMap<>();
   private final DriveSubsystem driveSubsystem;
 
-  public auto(DriveSubsystem driveSubsystem) {
+  public Autonomous(DriveSubsystem driveSubsystem) {
     this.driveSubsystem = driveSubsystem;
     // TODO: Figure out why this is not working correctly
     builder = new MecanumAutoBuilder(
@@ -38,16 +39,18 @@ public class auto {
           double rearRightSpeed = speeds.rearRightMetersPerSecond;
 
           double xSpeed = (frontLeftSpeed + rearLeftSpeed + frontRightSpeed + rearRightSpeed) / 4.0;
-          double ySpeed = (frontLeftSpeed - rearLeftSpeed + frontRightSpeed - rearRightSpeed) / 4.0;
-          double rotSpeed = (frontLeftSpeed - rearLeftSpeed - frontRightSpeed + rearRightSpeed) / 4.0;
+          double ySpeed = ((frontLeftSpeed + rearRightSpeed) + ((frontRightSpeed + rearLeftSpeed) * -1)) / 4.0;
+          double rotSpeed = ((frontLeftSpeed + rearLeftSpeed) - (frontRightSpeed + rearRightSpeed))
+              / (4.0 * Constants.DriveConstants.kTrackWidth);
 
-          driveSubsystem.drive(xSpeed, ySpeed, rotSpeed, false);
+          driveSubsystem.drive(xSpeed * -1, ySpeed, rotSpeed, false);
         },
         eventMap,
         driveSubsystem);
     autonomousChooser = new SendableChooser<Command>();
     autonomousChooser.setDefaultOption("no-op", new InstantCommand());
     autonomousChooser.addOption("Go Foward", goFoward());
+    autonomousChooser.addOption("Go Left", goLeft());
 
     SmartDashboard.putData("Autonomous Chooser", autonomousChooser);
   }
@@ -58,7 +61,13 @@ public class auto {
 
   public Command goFoward() {
     return builder.fullAuto(
-        PathPlanner.loadPath("New Path", AutoConstants.kMaxSpeedMetersPerSecond,
+        PathPlanner.loadPath("Go Foward", AutoConstants.kMaxSpeedMetersPerSecond,
+            AutoConstants.kMaxAccelerationMetersPerSecondSquared));
+  }
+
+  public Command goLeft() {
+    return builder.fullAuto(
+        PathPlanner.loadPath("Go Left", AutoConstants.kMaxSpeedMetersPerSecond,
             AutoConstants.kMaxAccelerationMetersPerSecondSquared));
   }
 }
