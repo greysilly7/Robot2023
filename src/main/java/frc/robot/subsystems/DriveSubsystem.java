@@ -197,11 +197,15 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public double getAngularVelocity() {
-    double leftVel = m_frontLeft.getSelectedSensorVelocity();
-    double rightVel = m_frontRight.getSelectedSensorVelocity();
-    double angularVel = (rightVel - leftVel) / (2 * DriveConstants.kTrackWidth);
+    var wheelSpeeds = getCurrentWheelSpeeds();
+    double frontLeftSpeed = wheelSpeeds.frontLeftMetersPerSecond;
+    double frontRightSpeed = wheelSpeeds.frontRightMetersPerSecond;
+    double rearLeftSpeed = wheelSpeeds.rearLeftMetersPerSecond;
+    double rearRightSpeed = wheelSpeeds.rearRightMetersPerSecond;
+
+    double angularVel = ((frontLeftSpeed + rearLeftSpeed) - (frontRightSpeed + rearRightSpeed))
+        / (4.0 * DriveConstants.kTrackWidth);
 
     return angularVel;
   }
-
 }
