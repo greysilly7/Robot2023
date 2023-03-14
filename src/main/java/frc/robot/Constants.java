@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -27,6 +26,8 @@ public final class Constants {
     public static final int kRearLeftMotorPort = 3;
     public static final int kFrontRightMotorPort = 1;
     public static final int kRearRightMotorPort = 4;
+    public static final int kArmMotorPort = 5;
+    public static final int kIntakeMotorPort = 6;
 
     public static final double kTrackWidth = 0.5715;
     // Distance between centers of right and left wheels on robot
@@ -61,12 +62,12 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
-    public static final double kDeadzone = 0.20;
+    public static final double kDeadzone = 0.15;
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 2.0;
-    public static final double kMaxAccelerationMetersPerSecond = 0.5;
+    public static final double kMaxSpeedMetersPerSecond = 1.0;
+    public static final double kMaxAccelerationMetersPerSecond = 0.1;
 
     public static final double kPXController = 0.6;
     public static final double kPYController = 0.6;

@@ -204,7 +204,7 @@ public class DriveSubsystem extends SubsystemBase {
     double rearRightSpeed = wheelSpeeds.rearRightMetersPerSecond;
 
     double angularVel = ((frontLeftSpeed + rearLeftSpeed) - (frontRightSpeed + rearRightSpeed))
-        / (4.0 * DriveConstants.kTrackWidth);
+        / 4.0;
 
     return angularVel;
   }
