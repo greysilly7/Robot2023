@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
@@ -31,19 +30,31 @@ public class Autonomous {
         new PIDConstants(0 /* AutoConstants.kPXController */, 0, 0),
         new PIDConstants(0 /* AutoConstants.kPYController */, 0, 0),
         AutoConstants.kMaxSpeedMetersPerSecond,
-        speeds -> {
-          double frontLeftSpeed = speeds.frontLeftMetersPerSecond;
-          double frontRightSpeed = speeds.frontRightMetersPerSecond;
-          double rearLeftSpeed = speeds.rearLeftMetersPerSecond;
-          double rearRightSpeed = speeds.rearRightMetersPerSecond;
-
-          double xSpeed = (frontLeftSpeed + rearLeftSpeed + frontRightSpeed + rearRightSpeed) / 4.0;
-          double ySpeed = ((frontLeftSpeed + rearRightSpeed) + ((frontRightSpeed + rearLeftSpeed) * -1)) / 4.0;
-          double rotSpeed = ((frontLeftSpeed + rearLeftSpeed) - (frontRightSpeed + rearRightSpeed))
-              / (4.0 * DriveConstants.kTrackWidth);
-
-          driveSubsystem.drive(xSpeed * -1, ySpeed, rotSpeed, false);
-        },
+        driveSubsystem::setMotorSpeedsAuto,
+        /*
+         * speeds -> {
+         * double gearRatio = 10.25;
+         * 
+         * double frontLeftSpeed = speeds.frontLeftMetersPerSecond;
+         * double frontRightSpeed = speeds.frontRightMetersPerSecond;
+         * double rearLeftSpeed = speeds.rearLeftMetersPerSecond;
+         * double rearRightSpeed = speeds.rearRightMetersPerSecond;
+         * 
+         * double xSpeed = (frontLeftSpeed + rearLeftSpeed + frontRightSpeed +
+         * rearRightSpeed) / 4.0;
+         * double ySpeed = ((frontLeftSpeed + rearRightSpeed) + ((frontRightSpeed +
+         * rearLeftSpeed) * -1)) / 4.0;
+         * double rotSpeed = ((frontLeftSpeed + rearLeftSpeed) - (frontRightSpeed +
+         * rearRightSpeed))
+         * / 4.0;
+         * 
+         * xSpeed /= gearRatio;
+         * ySpeed /= gearRatio;
+         * rotSpeed /= gearRatio;
+         * 
+         * driveSubsystem.drive(xSpeed * -1, ySpeed, rotSpeed, false);
+         * },
+         */
         eventMap,
         driveSubsystem);
     autonomousChooser = new SendableChooser<Command>();

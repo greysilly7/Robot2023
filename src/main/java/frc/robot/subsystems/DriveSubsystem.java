@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
@@ -34,8 +35,13 @@ public class DriveSubsystem extends SubsystemBase {
       m_gyro.getRotation2d(),
       new MecanumDriveWheelPositions());
 
-  /** Creates a new DriveSubsystem. */
+  // Creates a new DriveSubsystem.
   public DriveSubsystem() {
+    m_frontLeft.setNeutralMode(NeutralMode.Brake);
+    m_rearLeft.setNeutralMode(NeutralMode.Brake);
+    m_frontRight.setNeutralMode(NeutralMode.Brake);
+    m_rearRight.setNeutralMode(NeutralMode.Brake);
+
     // Fancy Dancy Encoder Stuff
     m_frontLeft.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
         DriveConstants.kEncoderTimeoutMS);
@@ -108,7 +114,26 @@ public class DriveSubsystem extends SubsystemBase {
     }
   }
 
-  /** Sets the front left drive MotorController to a voltage. */
+  public void setMotorSpeedsAuto(MecanumDriveWheelSpeeds speeds) {
+    double frontLeftSpeed = speeds.frontLeftMetersPerSecond;
+    double frontRightSpeed = speeds.frontRightMetersPerSecond;
+    double rearLeftSpeed = speeds.rearLeftMetersPerSecond;
+    double rearRightSpeed = speeds.rearRightMetersPerSecond;
+
+    // Scale the speeds based on the gear ratio
+    frontLeftSpeed /= DriveConstants.kGearRatio;
+    frontRightSpeed /= DriveConstants.kGearRatio;
+    rearLeftSpeed /= DriveConstants.kGearRatio;
+    rearRightSpeed /= DriveConstants.kGearRatio;
+
+    // Set the motor speeds
+    m_frontLeft.set(frontLeftSpeed);
+    m_rearLeft.set(rearLeftSpeed);
+    m_frontRight.set(frontRightSpeed);
+    m_rearRight.set(rearRightSpeed);
+  }
+
+  /** Sets the motors to a voltage. */
   public void setDriveMotorControllersVolts(MecanumDriveMotorVoltages volts) {
     m_frontLeft.setVoltage(volts.frontLeftVoltage);
     m_rearLeft.setVoltage(volts.rearLeftVoltage);

@@ -24,9 +24,9 @@ public class TeleopCommand extends CommandBase {
 
     // Default values
     kMaxSpeed = 2.0;
-    kMaxAcceleration = 0.25;
+    kMaxAcceleration = 0.1;
     maxTurnRate = 180.0;
-    ;
+
     m_prevTimeX = 0.0;
 
     m_constraints = new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration);
@@ -60,11 +60,12 @@ public class TeleopCommand extends CommandBase {
         new TrapezoidProfile.State(m_robotDrive.getPose().getTranslation().getY(), 0),
         new TrapezoidProfile.State(y, 0));
 
-    double turnRate = maxTurnRate * z;
+    // double turnRate = maxTurnRate * z;
+    double scaledZ = z * maxTurnRate;
     TrapezoidProfile profileZ = new TrapezoidProfile(
         m_constraints,
         new TrapezoidProfile.State(m_robotDrive.getTurnRate(), 0),
-        new TrapezoidProfile.State(turnRate, 0));
+        new TrapezoidProfile.State(scaledZ, 0));
 
     double currentTime = Timer.getFPGATimestamp();
     double deltaTime = currentTime - m_prevTimeX;
@@ -77,7 +78,7 @@ public class TeleopCommand extends CommandBase {
     if (profileX.isFinished(deltaTime) && profileY.isFinished(deltaTime) && profileZ.isFinished(deltaTime)) {
       m_robotDrive.drive(0, 0, 0, false);
     } else {
-      m_robotDrive.drive(nextX, nextY, nextZ, false);
+      m_robotDrive.drive(nextX, -nextY, nextZ, false);
     }
   }
 }

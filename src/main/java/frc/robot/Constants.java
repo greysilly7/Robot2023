@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -26,7 +27,6 @@ public final class Constants {
     public static final int kRearLeftMotorPort = 3;
     public static final int kFrontRightMotorPort = 1;
     public static final int kRearRightMotorPort = 4;
-    public static final int kArmMotorPort = 5;
     public static final int kIntakeMotorPort = 6;
 
     public static final double kTrackWidth = 0.5715;
@@ -71,5 +71,24 @@ public final class Constants {
 
     public static final double kPXController = 0.6;
     public static final double kPYController = 0.6;
+  }
+
+  public static final class ArmConstants {
+    public static final int kArmMotorPort = 5;
+
+    public static final int kArmTrajectoryPeriod = 10;
+    public static final int kArmSCurveStrength = 0;
+
+    // Encoder constants
+    public static final int kEncoderCPR = 2048;
+    public static final double kArmDegreesPerEncoderUnit = 360.0 / kEncoderCPR;
+
+    // Motion magic profile constants
+    public static final int kArmCruiseVelocity = 500; // encoder units per 100ms
+    public static final int kArmAcceleration = 5000; // encoder units per 100ms per second
+  }
+
+  public static final class IntakeConstants {
+    public static final int kIntakeMotorPort = 6;
   }
 }

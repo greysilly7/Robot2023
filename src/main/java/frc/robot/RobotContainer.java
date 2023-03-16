@@ -9,7 +9,9 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.OIConstants;
 import frc.robot.auto.Autonomous;
 import frc.robot.commands.TeleopCommand;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -21,12 +23,17 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    // The robot's subsystems
-    private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-    // Autonomous
-    private final Autonomous m_auto = new Autonomous(m_robotDrive);
     // The driver's controller
     private final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+
+    // The robot's subsystems
+    private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+    private final ArmSubsystem m_arm = new ArmSubsystem();
+    private final IntakeSubsystem m_intake = new IntakeSubsystem(m_driverController);
+
+    // Autonomous
+    private final Autonomous m_auto = new Autonomous(m_robotDrive);
+
     // Teleop Command
     private final TeleopCommand m_teleopCommand = new TeleopCommand(m_robotDrive, m_driverController);
 
@@ -53,9 +60,13 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         // Drive at half speed when the right bumper is held
-        new JoystickButton(m_driverController, Button.kRightBumper.value)
+        new JoystickButton(m_driverController, Button.kA.value)
                 .onTrue(new InstantCommand(() -> m_robotDrive.setMaxOutput(0.5)))
                 .onFalse(new InstantCommand(() -> m_robotDrive.setMaxOutput(1)));
+        new JoystickButton(m_driverController, Button.kRightBumper.value)
+                .onTrue(new InstantCommand(() -> m_arm.moveArm(0.2)));
+        new JoystickButton(m_driverController, Button.kLeftBumper.value)
+                .onTrue(new InstantCommand(() -> m_arm.moveArm(-0.2)));
     }
 
     public Command getAutonomousCommand() {
