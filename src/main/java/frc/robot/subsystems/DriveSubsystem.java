@@ -114,6 +114,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
   }
 
+  /*
   public void setMotorSpeedsAuto(MecanumDriveWheelSpeeds speeds) {
     double frontLeftSpeed = speeds.frontLeftMetersPerSecond;
     double frontRightSpeed = speeds.frontRightMetersPerSecond;
@@ -132,6 +133,7 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.set(frontRightSpeed);
     m_rearRight.set(rearRightSpeed);
   }
+  */
 
   /** Sets the motors to a voltage. */
   public void setDriveMotorControllersVolts(MecanumDriveMotorVoltages volts) {
@@ -155,13 +157,13 @@ public class DriveSubsystem extends SubsystemBase {
    * @return the current wheel speeds in a MecanumDriveWheelSpeeds object.
    */
   public MecanumDriveWheelSpeeds getCurrentWheelSpeeds() {
-    double frontLeftSpeed = m_frontLeft.getSelectedSensorVelocity() * DriveConstants.kEncoderMetersPerRotation
+    double frontLeftSpeed = m_frontLeft.getSelectedSensorVelocity() * 0.1 * DriveConstants.kEncoderMetersPerRotation
         / DriveConstants.kGearRatio;
-    double frontRightSpeed = m_frontRight.getSelectedSensorVelocity()
-        * DriveConstants.kEncoderMetersPerRotation / DriveConstants.kGearRatio;
-    double rearLeftSpeed = m_rearLeft.getSelectedSensorVelocity() * DriveConstants.kEncoderMetersPerRotation
+    double frontRightSpeed = m_frontRight.getSelectedSensorVelocity() * 0.1 * DriveConstants.kEncoderMetersPerRotation
         / DriveConstants.kGearRatio;
-    double rearRightSpeed = m_rearRight.getSelectedSensorVelocity() * DriveConstants.kEncoderMetersPerRotation
+    double rearLeftSpeed = m_rearLeft.getSelectedSensorVelocity() * 0.1 * DriveConstants.kEncoderMetersPerRotation
+        / DriveConstants.kGearRatio;
+    double rearRightSpeed = m_rearRight.getSelectedSensorVelocity() * 0.1 * DriveConstants.kEncoderMetersPerRotation
         / DriveConstants.kGearRatio;
     return new MecanumDriveWheelSpeeds(frontLeftSpeed, frontRightSpeed, rearLeftSpeed, rearRightSpeed);
   }

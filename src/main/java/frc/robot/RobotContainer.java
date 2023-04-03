@@ -4,17 +4,19 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.OIConstants;
-import frc.robot.auto.Autonomous;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -24,25 +26,29 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
     // The driver's controller
-    private final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+    private final CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
+    private final CommandXboxController m_armController = new CommandXboxController(OIConstants.kArmControllerPort);
 
     // The robot's subsystems
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-    private final ArmSubsystem m_arm = new ArmSubsystem();
-    private final IntakeSubsystem m_intake = new IntakeSubsystem(m_driverController);
-
-    // Autonomous
-    private final Autonomous m_auto = new Autonomous(m_robotDrive);
+    private final ArmSubsystem m_arm = new ArmSubsystem(m_armController);
+    private final IntakeSubsystem m_intake = new IntakeSubsystem(m_armController);
 
     // Teleop Command
     private final TeleopCommand m_teleopCommand = new TeleopCommand(m_robotDrive, m_driverController);
-
+    //Scott likes men
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
         // Configure the button bindings
         configureButtonBindings();
+
+        // Camera Stuff
+        CameraServer.startAutomaticCapture();
+        CvSink cvSink = CameraServer.getVideo();
+        CvSource outputStream = CameraServer.putVideo("BLURR", 640, 480);
+        
 
         // Configure default commands
         // Set the default drive command to split-stick arcade drive
@@ -54,22 +60,100 @@ public class RobotContainer {
      * created by
      * instantiating a {@link edu.wpi.first.wpilibj.GenericHID} or one of its
      * subclasses ({@link
-     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling
+     * edu.wpi.first.wpilibj.Joystick} or {@link CommandXboxController}), and then calling
      * passing it to a
      * {@link JoystickButton}.
      */
     private void configureButtonBindings() {
         // Drive at half speed when the right bumper is held
-        new JoystickButton(m_driverController, Button.kA.value)
-                .onTrue(new InstantCommand(() -> m_robotDrive.setMaxOutput(0.5)))
-                .onFalse(new InstantCommand(() -> m_robotDrive.setMaxOutput(1)));
-        new JoystickButton(m_driverController, Button.kRightBumper.value)
-                .onTrue(new InstantCommand(() -> m_arm.moveArm(0.2)));
-        new JoystickButton(m_driverController, Button.kLeftBumper.value)
-                .onTrue(new InstantCommand(() -> m_arm.moveArm(-0.2)));
+
+        // GET the SonarLint extension!
+        m_driverController.rightBumper()
+            .onTrue(new InstantCommand(() -> m_robotDrive.setMaxOutput(0.3)))
+            .onFalse(new InstantCommand(() -> m_robotDrive.setMaxOutput(1.0)));
+        m_driverController.leftBumper()
+            .onTrue(new InstantCommand(() -> m_robotDrive.setMaxOutput(0.6)))
+            .onFalse(new InstantCommand(() -> m_robotDrive.setMaxOutput(1.0)));
+        m_armController.rightBumper()
+            .onTrue(new InstantCommand(() -> m_arm.setArmPosition(-0.373)));
+        m_armController.x()
+            .onTrue(new InstantCommand(() -> m_arm.setArmPosition(-0.271)));
+        m_armController.leftBumper()
+                .onTrue(new InstantCommand(() -> m_arm.setArmPosition(0)));
+        m_armController.y()
+            .onTrue(new InstantCommand(m_intake::foward))
+            .onFalse(new InstantCommand(m_intake::stopMotor));
+        m_armController.b()
+            .onTrue(new InstantCommand(m_intake::backwards))
+            .onFalse(new InstantCommand(m_intake::stopMotor));
+
     }
 
-    public Command getAutonomousCommand() {
-        return m_auto.getSelected();
+      /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public Command getAutonomousCommand(Timer timer) {
+    while (timer.get() < 6) {
+        if (timer.get() < 2) {
+            m_robotDrive.drive(-0.2,0,0,false);
+            continue;
+        }
+        m_robotDrive.drive(0.2, 0, 0, false);
     }
+        m_robotDrive.drive(0, 0, 0, false);
+    
+    return null;
+    /*
+    // Create config for trajectory
+    TrajectoryConfig config =
+        new TrajectoryConfig(
+            Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+                Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+            // Add kinematics to ensure max speed is actually obeyed
+            .setKinematics(Constants.DriveConstants.kDriveKinematics);
+
+    // An example trajectory to follow.  All units in meters.
+    Trajectory exampleTrajectory =
+        TrajectoryGenerator.generateTrajectory(
+            // Start at the origin facing the +X direction
+            new Pose2d(0, 0, new Rotation2d(0)),
+            List.of(new Translation2d(0, 0)),
+            // End 3 meters straight ahead of where we started, facing forward
+            new Pose2d(3, 0, new Rotation2d(0)),
+            config);
+
+    MecanumControllerCommand mecanumControllerCommand =
+        new MecanumControllerCommand(
+            exampleTrajectory,
+            m_robotDrive::getPose,
+            Constants.DriveConstants.kFeedforward,
+            Constants.DriveConstants.kDriveKinematics,
+
+            // Position controllers
+            new PIDController(Constants.AutoConstants.kPXController, 0, 0),
+            new PIDController(Constants.AutoConstants.kPYController, 0, 0),
+            new ProfiledPIDController(
+                Constants.AutoConstants.kPThetaController, 0, 0, Constants.AutoConstants.kThetaControllerConstraints),
+
+            // Needed for normalizing wheel speeds
+            Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+
+            // Velocity PID's
+            new PIDController(Constants.DriveConstants.kPFrontLeftVel, 0, 0),
+            new PIDController(Constants.DriveConstants.kPRearLeftVel, 0, 0),
+            new PIDController(Constants.DriveConstants.kPFrontRightVel, 0, 0),
+            new PIDController(Constants.DriveConstants.kPRearRightVel, 0, 0),
+            m_robotDrive::getCurrentWheelSpeeds,
+            m_robotDrive::setDriveMotorControllersVolts, // Consumer for the output motor voltages
+            m_robotDrive);
+
+    // Reset odometry to the starting pose of the trajectory.
+    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+
+    // Run path following command, then stop at the end.
+    return mecanumControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    */
+  }
 }

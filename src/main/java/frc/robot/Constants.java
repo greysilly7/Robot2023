@@ -7,7 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -62,22 +62,31 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kArmControllerPort = 1;
     public static final double kDeadzone = 0.15;
   }
 
   public static final class AutoConstants {
     public static final double kMaxSpeedMetersPerSecond = 1.0;
-    public static final double kMaxAccelerationMetersPerSecond = 0.1;
+    public static final double kMaxAccelerationMetersPerSecond = 0.5;
+    public static double kMaxAccelerationMetersPerSecondSquared = 0.25;
 
-    public static final double kPXController = 0.6;
-    public static final double kPYController = 0.6;
+    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
+    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+
+    public static final double kPXController = 0.5;
+    public static final double kPYController = 0.5;
+    public static final double kPThetaController = 0.5;
+
+    public static final TrapezoidProfile.Constraints kThetaControllerConstraints = 
+    new TrapezoidProfile.Constraints(kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
   public static final class ArmConstants {
     public static final int kArmMotorPort = 5;
 
     public static final int kArmTrajectoryPeriod = 10;
-    public static final int kArmSCurveStrength = 0;
+    public static final int kArmSCurveStrength = 1;
 
     // Encoder constants
     public static final int kEncoderCPR = 2048;
