@@ -3,7 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
@@ -39,7 +38,7 @@ public class TeleopCommand extends CommandBase {
     double x = MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDeadzone);
     double y = MathUtil.applyDeadband(-m_driverController.getLeftX(), OIConstants.kDeadzone);
     double z = MathUtil.applyDeadband(-m_driverController.getRightX(), OIConstants.kDeadzone);
-    
+
     TrapezoidProfile profileX = new TrapezoidProfile(
         m_constraints,
         new TrapezoidProfile.State(m_robotDrive.getPose().getTranslation().getX(), 0),
@@ -70,5 +69,5 @@ public class TeleopCommand extends CommandBase {
     } else {
       m_robotDrive.drive(nextX, nextY, nextZ, false);
     }
-    }
+  }
 }

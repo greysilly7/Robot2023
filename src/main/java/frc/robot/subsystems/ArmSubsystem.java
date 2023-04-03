@@ -22,8 +22,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   private boolean usePresets = false;
 
-  public ArmSubsystem(CommandXboxController armController)
-  {
+  public ArmSubsystem(CommandXboxController armController) {
     m_armMotor.configContinuousCurrentLimit(10);
     m_armMotor.configPeakCurrentLimit(15);
     m_armMotor.enableCurrentLimit(true);
@@ -33,9 +32,10 @@ public class ArmSubsystem extends SubsystemBase {
     pidController.setSetpoint(0);
     SmartDashboard.putData(m_encoder);
     m_armController = armController;
-    }
-    //if(urmom)
-    //and(urmom)
+  }
+
+  // if(urmom)
+  // and(urmom)
   @Override
   public void periodic() {
     double joystickPos = MathUtil.applyDeadband(m_armController.getLeftY(), 0.20);
@@ -48,22 +48,17 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void update(double joystickInput) {
-    if (usePresets)
-    {
+    if (usePresets) {
       m_armMotor.set(ControlMode.PercentOutput, pidController.calculate(m_encoder.getDistance()));
       if (Math.abs(m_encoder.getDistance() - pidController.getSetpoint()) <= 0.09)
         usePresets = false;
-    }
-    else
-    {
-      if (joystickInput != 0)
-      { 
+    } else {
+      if (joystickInput != 0) {
         joystickInput = Math.copySign(joystickInput * joystickInput, joystickInput);
         double pidOutput = pidController.calculate(joystickInput);
         // double pidOutput = m_armController.getLeftY();
         m_armMotor.set(ControlMode.PercentOutput, Math.copySign(pidOutput, joystickInput));
-      }
-      else
+      } else
         stopArm();
     }
   }
@@ -72,7 +67,6 @@ public class ArmSubsystem extends SubsystemBase {
     m_armMotor.set(ControlMode.PercentOutput, 0);
   }
 
- 
-//yo momma
-//hey guys, did you know in terms, there are forums 
+  // yo momma
+  // hey guys, did you know in terms, there are forums
 }

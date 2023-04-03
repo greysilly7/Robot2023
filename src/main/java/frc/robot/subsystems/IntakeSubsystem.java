@@ -25,7 +25,7 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-   if (m_controller.getLeftTriggerAxis() > 0.15) {
+    if (m_controller.getLeftTriggerAxis() > 0.15) {
       isInverted = true;
     } else {
       isInverted = false;
@@ -37,7 +37,7 @@ public class IntakeSubsystem extends SubsystemBase {
       m_intakeMotor.set(-0.45);
     } else {
       m_intakeMotor.set(0.35);
-    } 
+    }
   }
 
   public void backwards() {

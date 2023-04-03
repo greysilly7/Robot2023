@@ -115,25 +115,25 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /*
-  public void setMotorSpeedsAuto(MecanumDriveWheelSpeeds speeds) {
-    double frontLeftSpeed = speeds.frontLeftMetersPerSecond;
-    double frontRightSpeed = speeds.frontRightMetersPerSecond;
-    double rearLeftSpeed = speeds.rearLeftMetersPerSecond;
-    double rearRightSpeed = speeds.rearRightMetersPerSecond;
-
-    // Scale the speeds based on the gear ratio
-    frontLeftSpeed /= DriveConstants.kGearRatio;
-    frontRightSpeed /= DriveConstants.kGearRatio;
-    rearLeftSpeed /= DriveConstants.kGearRatio;
-    rearRightSpeed /= DriveConstants.kGearRatio;
-
-    // Set the motor speeds
-    m_frontLeft.set(frontLeftSpeed);
-    m_rearLeft.set(rearLeftSpeed);
-    m_frontRight.set(frontRightSpeed);
-    m_rearRight.set(rearRightSpeed);
-  }
-  */
+   * public void setMotorSpeedsAuto(MecanumDriveWheelSpeeds speeds) {
+   * double frontLeftSpeed = speeds.frontLeftMetersPerSecond;
+   * double frontRightSpeed = speeds.frontRightMetersPerSecond;
+   * double rearLeftSpeed = speeds.rearLeftMetersPerSecond;
+   * double rearRightSpeed = speeds.rearRightMetersPerSecond;
+   * 
+   * // Scale the speeds based on the gear ratio
+   * frontLeftSpeed /= DriveConstants.kGearRatio;
+   * frontRightSpeed /= DriveConstants.kGearRatio;
+   * rearLeftSpeed /= DriveConstants.kGearRatio;
+   * rearRightSpeed /= DriveConstants.kGearRatio;
+   * 
+   * // Set the motor speeds
+   * m_frontLeft.set(frontLeftSpeed);
+   * m_rearLeft.set(rearLeftSpeed);
+   * m_frontRight.set(frontRightSpeed);
+   * m_rearRight.set(rearRightSpeed);
+   * }
+   */
 
   /** Sets the motors to a voltage. */
   public void setDriveMotorControllersVolts(MecanumDriveMotorVoltages volts) {

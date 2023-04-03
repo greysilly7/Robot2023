@@ -78,8 +78,8 @@ public final class Constants {
     public static final double kPYController = 0.5;
     public static final double kPThetaController = 0.5;
 
-    public static final TrapezoidProfile.Constraints kThetaControllerConstraints = 
-    new TrapezoidProfile.Constraints(kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+    public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
+        kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
   public static final class ArmConstants {
